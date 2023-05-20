@@ -1,15 +1,10 @@
 # Rezoning-Predictive-AI-Model
 A machine learning model that predicts the outcome of rezoning applications as "approved" or "rejected" based on various application attributes.
 
+-By Remy Zhang
 
+### Introduction
 
-
-
-Rezoning Application Predictive Outcome Model
-
-By Remy Zhang
-
-Introduction 
 In Canada's major cities like Vancouver, the ongoing housing crisis is characterized by a significant demand for housing and limited supply. To increase the housing stock, constructing high-density housing has been identified as a potential solution that can accommodate more people on the limited amount of land available in urban areas. However, the creation of high-density housing requires the rezoning of low-density, industrial or farmland, a difficult process that can take months or even years to complete. This process involves multiple public hearings, environmental impact reports, expertise in planning law, research of the city council, and financial reports, making it a costly and time-consuming endeavor for developers. From a report published by the National Multifamily Housing Council, when rezoning is required to develop multifamily high-density housing, rezoning efforts represent 3.4% of the entire cost of development (NMHC, 2019). Considering that high-density developments like multifamily or high–rises can cost tens of millions to develop, this is a large percentage cost. Even with all these efforts, there is still no guarantee that the application will be approved, posing a big risk factor for developers in building more housing. 
 
 Due to the cost and time required to complete the rezoning process, the lack of available land, and community resistance to new developments, developers are often forced to focus on constructing high-rise buildings, leading to a "missing middle". Where there is a lack of low-rise high-density housing, which offers better aesthetics and is quicker and cheaper to construct per unit.
@@ -20,20 +15,32 @@ To address these housing issues, a machine learning model that predicts the outc
 The dataset used in this project contains all 162 instances of tall residential buildings constructed in Toronto from 2008 through 2018 recorded by the Council on Tall Buildings and Urban Habitat. The target variable would be the rezoning result, which is not available but can be derived from available data and this will be discussed later in this report. Below are the inputs from the dataset:
 
 ● Status (under construction, complete, proposed) - string
+
 ● Name of Tower - string
+
 ● Use (residential, office, retail) - string
+
 ● Address - string
+
 ● City - string
+
 ● # floors - discrete int
+
 ● Proposed Date- string
+
 ● Rezoning Authority (OMB, City Council) - string
+
 ● OMB Case # - string
+
 ● Type of Approval (Null, Hearing, Settlement, prehearing) - string
+
 ● Rezoning approval date - string
+
 ● Rezoning duration - int
 
 
-Background 
+### Background 
+
 The core problem that my project aims to solve is to classify the features of a rezoning application to make a binary prediction of whether or not that application will be approved or rejected. There is currently a paper titled: “Evaluation of Current Construction Permitting Process in City of Toronto and Future of Permitting in the Global
 Construction Industry” (Shahi, 2018), implementing a Bayesian Model, which, similar to my project, predicts the outcome of rezoning applications. In this paper, the Bayesian model was able to achieve an 84.6% accuracy. However, no snippets of code or documentation of hyperparameters were recorded on the paper. This paper was the only one which researched the application of machine learning in rezoning prediction, so, I looked at literature concerning tabular datasets and binary classification as a whole.
 
@@ -41,9 +48,9 @@ Current literature suggests that Gradient Boosted Tree (GBT) models like XGBoost
 
 Notably, neural networks also perform well with tabular datasets, and in many cases are documented to perform better than Gradient Boosted Trees (DataRobot, 2021). Thus, in this project, I also tested the data on a Multilayer perceptron (MLP) model and conducted hyperparameter tuning while graphing test vs train accuracies to find an optimal set of parameters that don’t overfit.
 
-Methodology
-Data Collection and Cleaning
-The below figure outlines the steps taken for data collection and data cleaning conducted in this project.
+
+
+### Data Collection and Cleaning
 
 Starting with Data collection, the dataset used in this project contains 162 instances of tall residential buildings constructed in Toronto from 2008 through 2018 recorded by the Council on Tall Buildings and Urban Habitat. An article discussing the relationship between rezoning and school locations was established and this inspired the creation of a new column called “Distance to School” which outlined the distance in meters from the rezoning address to the nearest school (Calder, 2019). This was done manually on Google Maps, searching each address and then measuring the distance to the nearest school. The distance to major roads is also a factor that could affect rezoning success. Typically major roads carry more infrastructure like water lines and sewage which makes construction less costly for a city, compared to if the rezoning development was rural. This then inspired the creation of another column named “Major road?” which took the street name of each rezoning application and cross-referenced it against Toronto’s list of Major Arterial roads (Geographic.org, n.d.). 
 
@@ -61,7 +68,7 @@ Some data like the “Use” data feature has five unique options telling us wha
 
 
 
-Model Design:
+### Model Design:
 
 
 In this project, I conduct hyperparameter tuning on the two models: Random Forest and Multi-layer Perceptron. Starting with Random Forest, I test the following parameters and then return the combination with the highest test accuracy.
@@ -102,7 +109,7 @@ Metrics
 In evaluating the performance of our trained models with tuned hyperparameters, the primary metric was accuracy. Accuracy was expressed as a percentage indicating the likelihood in test or training data that each trained model was going to correctly predict a rezoning application as “approved” or “rejected”. 
 
 
-Results 
+### Results 
 Starting with the results of all the individual simple regression and tree models, below are the initial results without hyperparameter tuning:
 
 
@@ -124,7 +131,8 @@ Next moving onto the MLP model, tuning with the starting hyperparameters grid re
 
 Note the above 2 figures are examples of tuning hyperparameters for the MLP model. Comparatively the testing accuracy of the MLP model is lower than the Random Forest model and this result is expected since MLP models are not as effective with a small number of observations and features in a dataset.
 
-Limitations
+### Limitations
+
 As alluded to in the background section, there are a few key limitations to the dataset of rezoning applications which affected the accuracy and thoroughness of this project. Primarily, the dataset from the CTBUH does not include labels for each rezoning application specifying them as “rejected” or “approved”, requiring the target variable definition outlined in the Methodology section. Without target variable labels, my approach can be problematic in the case where a rezoning application was rejected at the time of the dataset, but was able to submit additional appeals to ultimately get the rezoning approved. For example, the development named “Grid Condos” on 181 Dundas Street E, at the time of the dataset collection in 2018 was in the rezoning proposal state with an OMB Hearing number, indicating the application was rejected. However, “Grid Condos” was able to successfully appeal their rezoning application in subsequent years, making the model incorrectly labeled in my data. While in my data processing stage, I manually correct these mistakes, a comprehensive solution would be to secure an up-to-date dataset and to collect a dataset with a pre-labelled column indicating whether each rezoning application was rejected or approved.
 
 Another limitation was the small size of the dataset I had at only 151 rows of data with only 18 recorded features. This combination of a limited number of observations and features made the models overly dependent on a few key features. While the Decision tree model was able to score a high test accuracy with low overfitting, because the dataset was so small, if new data is introduced, the accuracy could drop. Moreover, having only 151 rezoning applications to input, certain higher-performing models could not be utilized to their potential, like MLP and GBT. In the future, I would like to try MLP in addition to a gradient-boosted tree model like XGBoost to achieve a more robust and higher accuracy prediction of rezoning applications.
@@ -132,7 +140,7 @@ Another limitation was the small size of the dataset I had at only 151 rows of d
 Additionally, the dataset from the CTBUH only includes “tall buildings” which excludes buildings under 14-stories like low-rise, multi-family and other types of high-density housing in need of rezoning. Therefore, a limitation of my model is that it can only predict the outcome of rezoning applications for tall buildings, and the accuracy would most likely not be carried over to rezoning applications for other forms of high-density housing.
 
 
-References
+### References
 National Multifamily Housing Council (NMHC) & National Association of Home Builders (NAHB). (2019). Cost of Regulations Report. Retrieved from https://www.nmhc.org/research-insight/research-report/nmhc-nahb-cost-of-regulations-report/ 
 
 Canada Mortgage and Housing Corporation (CMHC). (n.d.). Guide to Developing Affordable Housing. Retrieved April 25, 2023, from https://www.cmhc-schl.gc.ca/en/professionals/housing-markets-data-and-research/housing-research/research-reports/nhs-outcomes/guide-developing-affordable-housing 
